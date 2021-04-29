@@ -4,12 +4,115 @@ const img = new Image(); // used to load image from <input> and draw to canvas
 
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
-  // TODO
+  const canvas = document.getElementById('user-image');
+  const ctx = canvas.getContext('2d');
+  const dimensions = getDimensions(canvas.width, canvas.height, img.width, img.height);
 
-  // Some helpful tips:
-  // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
-  // - Clear the form when a new image is selected
-  // - If you draw the image to canvas here, it will update as soon as a new image is selected
+  // Clear canvas context
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Fill canvas context with black
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw uploaded image onto canvas
+  ctx.drawImage(img, dimensions.startX, dimensions.startY);
+
+  // Toggle buttons to default state
+  const submit = document.querySelector('button[type=submit]');
+  submit.disabled = false;
+  const reset = document.querySelector('button[type=reset]');
+  reset.disabled = true;
+  const button = document.querySelector('button[type=button]');
+  button.disabled = true;
+});
+
+const newImage = document.getElementById('image-input'); // used to add the uploaded image
+
+// Fires when image is changed
+newImage.addEventListener('change', () => {
+  // Load uploaded image into img src
+  const objectURL = URL.createObjectURL(newImage);
+  img.src = objectURL;
+
+  // Set img alt as object file name
+  const imgName = objectURL.split('/').pop().split('.').slice(0, -1).join('.');
+  img.alt = imgName;
+});
+
+const form = document.getElementById('generate-meme'); // used to add form text to image
+
+// Fires when Generate button is clicked
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const canvas = document.getElementById('user-image');
+  const ctx = canvas.getContext('2d');
+  const topText = form.elements[1].value;
+  const bottomText = form.elements[2].value;
+
+  // Add grabbed text to canvas
+  ctx.fillText(topText, canvas.width / 2, 0);
+  ctx.fillText(bottomText, canvas.width / 2, canvas.height);
+
+  // Toggle buttons
+  const submit = document.querySelector('button[type=submit]');
+  submit.disabled = true;
+  const reset = document.querySelector('button[type=reset]');
+  reset.disabled = false;
+  const button = document.querySelector('button[type=button]');
+  button.disabled = false;
+});
+
+const reset = document.querySelector('button[type=reset]'); // used to clear the canvas
+
+// Fires when clear button is clicked
+reset.addEventListener('click', () => {
+  const canvas = document.getElementById('user-image');
+  const ctx = canvas.getContext('2d');
+
+  // Clear canvas and text
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Toggle buttons back to default state
+  const submit = document.querySelector('button[type=submit]');
+  submit.disabled = false;
+  const reset = document.querySelector('button[type=reset]');
+  reset.disabled = true;
+  const button = document.querySelector('button[type=button]');
+  button.disabled = true;
+});
+
+const button = document.querySelector('button[type=button]'); // used to read text aloud
+
+// Fires when Read Text button is clicked
+button.addEventListener('click', () => {
+  const topText = form.elements[1].value;
+  const bottomText = form.elements[2].value;
+  const utterance = new SpeechSynthesisUtterance(topText + ' ' + bottomText);
+
+  // Speak the text added to the canvas
+  speechSynthesis.speak(utterance);
+});
+
+const volume = document.querySelector('input[type=range]'); // used by volume slider action
+
+// Fires when volume slider is updated
+volume.addEventListener('input', () => {
+  // Update volume level
+  const volumeLevel = volume.value;
+  const volumeImg = document.querySelector('#volume-group img');
+
+  // Update speaker image according to new volume level
+  if (volumeLevel >= 67) {
+    volumeImg.src = 'icons/volume-level-3.svg';
+  } else if (volumeLevel >= 34) {
+    volumeImg.src = 'icons/volume-level-2.svg';
+  } else if (volumeLevel >= 1) {
+    volumeImg.src = 'icons/volume-level-1.svg';
+  } else {
+    volumeImg.src = 'icons/volume-level-0.svg';
+  }
 });
 
 /**
@@ -23,7 +126,7 @@ img.addEventListener('load', () => {
  * and also the starting X and starting Y coordinate to be used when you draw the new image to the
  * Canvas. These coordinates align with the top left of the image.
  */
-function getDimmensions(canvasWidth, canvasHeight, imageWidth, imageHeight) {
+function getDimensions(canvasWidth, canvasHeight, imageWidth, imageHeight) {
   let aspectRatio, height, width, startX, startY;
 
   // Get the aspect ratio, used so the picture always fits inside the canvas
