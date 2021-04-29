@@ -106,12 +106,16 @@ volume.addEventListener('input', () => {
   // Update speaker image according to new volume level
   if (volumeLevel >= 67) {
     volumeImg.src = 'icons/volume-level-3.svg';
+    volumeImg.alt = 'Volume Level 3';
   } else if (volumeLevel >= 34) {
     volumeImg.src = 'icons/volume-level-2.svg';
+    volumeImg.alt = 'Volume Level 2';
   } else if (volumeLevel >= 1) {
     volumeImg.src = 'icons/volume-level-1.svg';
+    volumeImg.alt = 'Volume Level 1';
   } else {
     volumeImg.src = 'icons/volume-level-0.svg';
+    volumeImg.alt = 'Volume Level 0';
   }
 });
 
