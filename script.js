@@ -16,7 +16,7 @@ img.addEventListener('load', () => {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Draw uploaded image onto canvas
-  ctx.drawImage(img, dimensions.startX, dimensions.startY);
+  ctx.drawImage(img, dimensions.startX, dimensions.startY, dimensions.width, dimensions.height);
 
   // Toggle buttons to default state
   const submit = document.querySelector('button[type=submit]');
@@ -32,7 +32,7 @@ const newImage = document.getElementById('image-input'); // used to add the uplo
 // Fires when image is changed
 newImage.addEventListener('change', () => {
   // Load uploaded image into img src
-  const objectURL = URL.createObjectURL(newImage);
+  const objectURL = URL.createObjectURL(newImage.files[0]);
   img.src = objectURL;
 
   // Set img alt as object file name
@@ -52,8 +52,10 @@ form.addEventListener('submit', (e) => {
   const bottomText = form.elements[2].value;
 
   // Add grabbed text to canvas
-  ctx.fillText(topText, canvas.width / 2, 0);
-  ctx.fillText(bottomText, canvas.width / 2, canvas.height);
+  ctx.font = "30px Impact";
+  ctx.fillStyle = 'white';
+  ctx.fillText(topText, canvas.width / 2, 50);
+  ctx.fillText(bottomText, canvas.width / 2, canvas.height-50);
 
   // Toggle buttons
   const submit = document.querySelector('button[type=submit]');
@@ -90,6 +92,10 @@ button.addEventListener('click', () => {
   const topText = form.elements[1].value;
   const bottomText = form.elements[2].value;
   const utterance = new SpeechSynthesisUtterance(topText + ' ' + bottomText);
+  const volumeLevel = volume.value;
+
+  // Set volume of speech
+  utterance.volume = volumeLevel / 100.0;
 
   // Speak the text added to the canvas
   speechSynthesis.speak(utterance);
@@ -100,8 +106,8 @@ const volume = document.querySelector('input[type=range]'); // used by volume sl
 // Fires when volume slider is updated
 volume.addEventListener('input', () => {
   // Update volume level
-  const volumeLevel = volume.value;
   const volumeImg = document.querySelector('#volume-group img');
+  const volumeLevel = volume.value;
 
   // Update speaker image according to new volume level
   if (volumeLevel >= 67) {
