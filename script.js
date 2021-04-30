@@ -54,6 +54,7 @@ form.addEventListener('submit', (e) => {
   // Add grabbed text to canvas
   ctx.font = "30px Impact";
   ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
   ctx.fillText(topText, canvas.width / 2, 50);
   ctx.fillText(bottomText, canvas.width / 2, canvas.height-50);
 
